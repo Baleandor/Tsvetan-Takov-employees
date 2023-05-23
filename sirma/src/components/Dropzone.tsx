@@ -16,7 +16,6 @@ export default function Dropzone() {
             complete: results => {
                 const resData = results.data as unknown as Array<string[]>
                 setCsvData(resData)
-
             }
         })
     }
@@ -27,20 +26,30 @@ export default function Dropzone() {
         }
     }, [])
 
-    const {
-        getRootProps,
-        getInputProps,
-    } = useDropzone({
-        onDrop
-    });
-
-    const dateOrganizer = (csvData) => {
-        //create MAP out of csvData , dayJS?
-     
+    const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
 
+    const projectData = new Map()
+
+    if (csvData != null) {
+
+        csvData.map((el: Array<string>) => {
+            const projectIdKey = el[1]
+            const employeeIdValue = el[0]
+
+            if (projectData.has(projectIdKey)) {
+                projectData.set(projectIdKey, [...projectData.get(projectIdKey), employeeIdValue])
+            } else {
+                projectData.set(el[1], [el[0]])
+            }
+        })
     }
-    dateOrganizer(csvData)
+
+    projectData.forEach((value, key) => {
+        if (value.length == 2) {
+            console.log('we got em', value)
+        }
+    })
 
     return (
         <div {...getRootProps()}>

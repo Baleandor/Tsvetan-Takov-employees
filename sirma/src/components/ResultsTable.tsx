@@ -16,7 +16,6 @@ export default function ResultsTable({ csvData }: TableDataProps) {
                     </tr>
                 </thead>
                 <tbody>
-                    {/* values array map <tr> */}
                     {csvData && csvData.map((d, i) => {
                         return <tr key={i}>
                             <td>{d[0]}</td>
