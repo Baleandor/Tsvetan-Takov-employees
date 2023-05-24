@@ -6,7 +6,7 @@ function App() {
 
 
   return (
-    <div className='bg-slate-900'>
+    <div className='flex justify-center'>
       <Container />
     </div>
   )
