@@ -1,5 +1,5 @@
 interface TableDataProps {
-    parsedData: any[] | null
+    parsedData: Array<Record<string, any>>
 }
 
 export default function ResultsTable({ parsedData }: TableDataProps) {
@@ -17,9 +17,10 @@ export default function ResultsTable({ parsedData }: TableDataProps) {
                 </thead>
                 <tbody>
                     {parsedData && parsedData.map((d, i) => {
+
                         return <tr key={i}>
-                            <td>{d.emp1}</td>
-                            <td>{d.emp2}</td>
+                            <td>{d.emp1[0]}</td>
+                            <td>{d.emp2[0]}</td>
                             <td>{d.pId}</td>
                             <td>{d.days}</td>
                         </tr>
