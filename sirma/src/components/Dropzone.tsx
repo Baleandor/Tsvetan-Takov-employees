@@ -26,7 +26,7 @@ export default function Dropzone() {
         }
     }, [])
 
-    const { getRootProps, getInputProps } = useDropzone({ onDrop })
+    const { getRootProps, getInputProps } = useDropzone({ onDrop, noClick: true, noDragEventsBubbling: true })
     //look into dropzone optimizing
 
     const projectData = new Map()
@@ -44,6 +44,8 @@ export default function Dropzone() {
             }
         })
     }
+
+
 
     projectData.forEach((value, key) => {
         if (value.length == 2 && csvData != null) {
@@ -92,8 +94,8 @@ export default function Dropzone() {
             parsedCsvData.push({ emp1: employee1, emp2: employee2, pId: key, days: daysWorkedTogether })
         }
     })
-
     console.log('yare yare')
+
     parsedCsvData.sort((project1, project2) => {
         const project1Days = project1.days
         const project2Days = project2.days
@@ -103,8 +105,8 @@ export default function Dropzone() {
 
     return (
         <div {...getRootProps()} className="p-2 cursor-pointer">
-            <input {...getInputProps()} type="file" accept=".csv" className="p-2" />
-            <p className="p-2">Click here to upload CSV files...</p>
+            <input {...getInputProps()} accept=".csv" className="p-2" />
+            <p className="p-2">Drop files here to upload CSV files...</p>
             <ResultsTable parsedData={parsedCsvData} />
         </div>
     )
