@@ -26,12 +26,12 @@ export default function Dropzone() {
         }
     }, [])
 
-    const { getRootProps, getInputProps } = useDropzone({ onDrop });
-
+    const { getRootProps, getInputProps } = useDropzone({ onDrop })
+    //look into dropzone optimizing
 
     const projectData = new Map()
 
-    if (csvData != null) {
+    if (csvData) {
 
         csvData.map((el: Array<string>) => {
             const projectIdKey = el[1]
@@ -48,55 +48,52 @@ export default function Dropzone() {
     projectData.forEach((value, key) => {
         if (value.length == 2 && csvData != null) {
             const [employee1, employee2] = [...value]
-            const dates = []
-            let date1
-            let date2
+            const employeesPairingDates: Array<string> = []
+            let firstDateEmployeesPairing
+            let secondDateEmployeesPairing
             csvData.map((el) => {
                 if (el.includes(employee1) || el.includes(employee2)) {
-                    dates.push(el[2], el[3])
+                    employeesPairingDates.push(el[2], el[3])
                 }
             })
 
-            const startDate1 = dayjs(dates[0])
-            console.log(dates, dates[1])
-            const startDate2 = dayjs(dates[2])
-            let endDate1
-            let endDate2
+            const firstEmployeeStartDate = dayjs(employeesPairingDates[0])
 
-            if (startDate1.diff(startDate2, 'day') > 0) {
-                date1 = startDate1
+            const secondEmployeeStartDate = dayjs(employeesPairingDates[2])
+
+            if (firstEmployeeStartDate.diff(secondEmployeeStartDate, 'day') > 0) {
+                firstDateEmployeesPairing = firstEmployeeStartDate
             } else {
-                date1 = startDate2
+                firstDateEmployeesPairing = secondEmployeeStartDate
             }
 
-            if (dates[1] == 'NULL') {
-                date2 = dates[3]
+            let firstEmployeeEndDate
+            if (employeesPairingDates[1] === 'NULL') {
+                firstEmployeeEndDate = dayjs()
             } else {
-                endDate1 = dayjs(dates[1])
+                firstEmployeeEndDate = dayjs(employeesPairingDates[1])
             }
 
-            if (dates[3] == 'NULL') {
-                date2 = dates[1]
+            let secondEmployeeEndDate
+            if (employeesPairingDates[3] === 'NULL') {
+                secondEmployeeEndDate = dayjs()
             } else {
-                endDate2 = dayjs(dates[3])
+                secondEmployeeEndDate = dayjs(employeesPairingDates[3])
             }
 
-            // if (dates[1] == 'NULL' && dates[3] == 'NULL') {
-            //     endDate1 = new Date()
-            //     endDate2 = new Date()
-            // }
-
-            if (endDate1 != undefined && endDate2 != undefined) {
-                endDate1.diff(endDate2, 'day') > 0 ? date2 = endDate2 : date2 = endDate1
+            if (firstEmployeeEndDate.diff(secondEmployeeEndDate, 'day') < 0) {
+                secondDateEmployeesPairing = firstEmployeeEndDate
+            } else {
+                secondDateEmployeesPairing = secondEmployeeEndDate
             }
 
+            const daysWorkedTogether = secondDateEmployeesPairing.diff(firstDateEmployeesPairing, 'day')
 
-            const daysWorkedTogether = (Math.abs(date1.diff(date2, 'day')))
             parsedCsvData.push({ emp1: employee1, emp2: employee2, pId: key, days: daysWorkedTogether })
         }
     })
 
-
+    console.log('yare yare')
     parsedCsvData.sort((project1, project2) => {
         const project1Days = project1.days
         const project2Days = project2.days
@@ -106,7 +103,7 @@ export default function Dropzone() {
 
     return (
         <div {...getRootProps()} className="p-2 cursor-pointer">
-            <input {...getInputProps()} type="file" accept=".csv" className="p-2"/>
+            <input {...getInputProps()} type="file" accept=".csv" className="p-2" />
             <p className="p-2">Click here to upload CSV files...</p>
             <ResultsTable parsedData={parsedCsvData} />
         </div>
